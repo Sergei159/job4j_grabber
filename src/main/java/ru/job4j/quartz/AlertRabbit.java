@@ -42,7 +42,6 @@ public class AlertRabbit {
         AlertRabbit alertRabbit = new AlertRabbit();
         alertRabbit.init();
         try {
-            List<Long> store = new ArrayList<>();
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
             JobDataMap data = new JobDataMap();
@@ -60,7 +59,6 @@ public class AlertRabbit {
             scheduler.scheduleJob(job, trigger);
             Thread.sleep(10000);
             scheduler.shutdown();
-            System.out.println(store);
         } catch (Exception se) {
             se.printStackTrace();
         }
@@ -75,10 +73,9 @@ public class AlertRabbit {
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException {
             System.out.println("Rabbit runs here ...");
-            List<Long> store = (List<Long>) context.getJobDetail().getJobDataMap().get("store");
-            store.add(currentTimeMillis());
+            Connection cn = (Connection) context.getJobDetail().getJobDataMap().get("connection");
             try (PreparedStatement preparedStatement =
-                         connection.prepareStatement(
+                         cn.prepareStatement(
                                          "insert into rabbit(created_date) values(?);")) {
                 preparedStatement.setLong(1, currentTimeMillis());
                 preparedStatement.execute();
