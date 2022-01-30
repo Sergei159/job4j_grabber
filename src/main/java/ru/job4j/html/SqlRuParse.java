@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ru.job4j.grabber.utils.SqlRuDateTimeParser;
 
 /**
  * Класс выводит на консоль определнные данные из веб-страницы.
@@ -18,6 +19,8 @@ public class SqlRuParse {
             System.out.println(href.text());
             Element date = td.parent().child(5);
             System.out.println(date.text());
+            SqlRuDateTimeParser timeParser = new SqlRuDateTimeParser();
+            System.out.println(timeParser.parse(date.text()));
 
         }
 
