@@ -17,11 +17,19 @@ import static org.quartz.JobBuilder.*;
 import static org.quartz.TriggerBuilder.*;
 import static org.quartz.SimpleScheduleBuilder.*;
 
+/**
+ * Класс повторяет определенную операцию с интервалом времени,
+ * который задается в файле rabbit.properties
+ */
 public class AlertRabbit {
 
     private static int rabbitInterval;
     private static Connection connection;
 
+    /**
+     * метод открывает файл properties.
+     * достает оттуда интервал повторения операций и данные для подключения БД
+     */
     public void init() {
         try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
             Properties config = new Properties();
@@ -70,17 +78,22 @@ public class AlertRabbit {
             System.out.println(hashCode());
         }
 
+        /**
+         * Метод достает Connection из JobDataMap и воспроизводит с ним sql скрипт
+         * @param context
+         * @throws JobExecutionException
+         */
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException {
             System.out.println("Rabbit runs here ...");
-            Connection cn = (Connection) context.getJobDetail().getJobDataMap().get("connection");
-            try (PreparedStatement preparedStatement =
-                         cn.prepareStatement(
-                                         "insert into rabbit(created_date) values(?);")) {
-                preparedStatement.setLong(1, currentTimeMillis());
-                preparedStatement.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            try(Connection cn = (Connection) context.getJobDetail().getJobDataMap().get("connection")) {
+                try (PreparedStatement preparedStatement = cn.prepareStatement(
+                                             "insert into rabbit(created_date) values(?);")) {
+                    preparedStatement.setLong(1, currentTimeMillis());
+                    preparedStatement.execute();
+                }
+            } catch (SQLException exception) {
+                exception.printStackTrace();
             }
         }
     }
