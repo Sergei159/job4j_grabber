@@ -11,16 +11,23 @@ import ru.job4j.grabber.utils.SqlRuDateTimeParser;
  */
 public class SqlRuParse {
     public static void main(String[] args) throws Exception {
-        Document doc = Jsoup.connect("https://www.sql.ru/forum/job-offers").get();
-        Elements row = doc.select(".postslisttopic");
-        for (Element td : row) {
-            Element href = td.child(0);
-            System.out.println(href.attr("href"));
-            System.out.println(href.text());
-            Element date = td.parent().child(5);
-            System.out.println(date.text());
-            SqlRuDateTimeParser timeParser = new SqlRuDateTimeParser();
-            System.out.println(timeParser.parse(date.text()));
+        int countOfPages = 5;
+
+        StringBuilder url = new StringBuilder("https://www.sql.ru/forum/job-offers");
+        for (int i = 0; i < countOfPages; i++) {
+            url.append("/").append(i + 1);
+            Document doc = Jsoup.connect(url.toString()).get();
+            Elements row = doc.select(".postslisttopic");
+            for (Element td : row) {
+                Element href = td.child(0);
+                System.out.println(href.attr("href"));
+                System.out.println(href.text());
+                Element date = td.parent().child(5);
+                System.out.println(date.text());
+                SqlRuDateTimeParser timeParser = new SqlRuDateTimeParser();
+                System.out.println(timeParser.parse(date.text()));
+            }
+            url = new StringBuilder("https://www.sql.ru/forum/job-offers");
 
         }
 
