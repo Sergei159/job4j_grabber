@@ -9,6 +9,9 @@ import java.util.Map;
  * класс берет дату из сайта sql.ru  и конвектирует ее в определенный формат
  */
 public class SqlRuDateTimeParser implements DateTimeParser {
+    private final DateTimeFormatter dayIsGreaterThan10 = DateTimeFormatter.ofPattern("dd MM yy, HH:mm");
+    private final DateTimeFormatter dayIsLessThan10 = DateTimeFormatter.ofPattern("d MM yy, HH:mm");
+    private final DateTimeFormatter onlyDates = DateTimeFormatter.ofPattern("dd MM yy");
 
     private static final Map<String, String> MONTHS = Map.ofEntries(
             Map.entry("янв", "01"),
@@ -28,34 +31,29 @@ public class SqlRuDateTimeParser implements DateTimeParser {
 
     @Override
     public LocalDateTime parse(String parse) {
-        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd MM yy, HH:mm");
-        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("d MM yy, HH:mm");
-        DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("dd MM yy");
         LocalDateTime result = null;
-
+        LocalDate localDate = null;
         String[] dates = parse.split(",");
         String[] dividedDate = dates[0].split(" ");
 
         if (dates[0].contains("сегодня") || dates[0].contains("вчера")) {
             if (dates[0].contains("сегодня")) {
-                LocalDate localDate = LocalDate.now();
-                String date = localDate.format(formatter3);
-                String rsl = date + "," + dates[1];
-                result = LocalDateTime.parse(rsl, formatter1);
+                localDate = LocalDate.now();
             } else {
-                LocalDate localDate = LocalDate.now().minusDays(1);
-                String date = localDate.format(formatter3);
-                String rsl = date + "," + dates[1];
-                result = LocalDateTime.parse(rsl, formatter1);
+                localDate = LocalDate.now().minusDays(1);
             }
+            String date = localDate.format(onlyDates);
+            String dateAndTime = date + "," + dates[1];
+            result = LocalDateTime.parse(dateAndTime, dayIsGreaterThan10);
+
         } else {
             String rsl = dividedDate[0] + " " + MONTHS.get(dividedDate[1]) + " "
                     + dividedDate[2] + "," + dates[1];
 
             if (dividedDate[0].length() < 2) {
-                result = LocalDateTime.parse(rsl, formatter2);
+                result = LocalDateTime.parse(rsl, dayIsLessThan10);
             } else {
-                result = LocalDateTime.parse(rsl, formatter1);
+                result = LocalDateTime.parse(rsl, dayIsGreaterThan10);
             }
         }
         return result;
