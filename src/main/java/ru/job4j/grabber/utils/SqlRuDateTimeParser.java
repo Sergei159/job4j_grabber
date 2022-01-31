@@ -31,10 +31,9 @@ public class SqlRuDateTimeParser implements DateTimeParser {
 
     @Override
     public LocalDateTime parse(String parse) {
-        LocalDateTime result = null;
+        LocalDateTime result;
         LocalDate localDate = null;
         String[] dates = parse.split(",");
-        String[] dividedDate = dates[0].split(" ");
 
         if (dates[0].contains("сегодня") || dates[0].contains("вчера")) {
             if (dates[0].contains("сегодня")) {
@@ -44,18 +43,17 @@ public class SqlRuDateTimeParser implements DateTimeParser {
             }
             String date = localDate.format(onlyDates);
             String dateAndTime = date + "," + dates[1];
-            result = LocalDateTime.parse(dateAndTime, dayIsGreaterThan10);
-
-        } else {
-            String rsl = dividedDate[0] + " " + MONTHS.get(dividedDate[1]) + " "
+            return LocalDateTime.parse(dateAndTime, dayIsGreaterThan10);
+        }
+        String[] dividedDate = dates[0].split(" ");
+        String rsl = dividedDate[0] + " " + MONTHS.get(dividedDate[1]) + " "
                     + dividedDate[2] + "," + dates[1];
-
             if (dividedDate[0].length() < 2) {
                 result = LocalDateTime.parse(rsl, dayIsLessThan10);
             } else {
                 result = LocalDateTime.parse(rsl, dayIsGreaterThan10);
             }
-        }
+
         return result;
     }
 }
