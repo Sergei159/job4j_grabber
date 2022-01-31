@@ -3,11 +3,30 @@ package ru.job4j.grabber.utils;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Модель данных Пост(Вакансия)
+ *
+ */
 public class Post {
+    /**
+     * id
+     */
     private int id;
+    /**
+     * Заголовок
+     */
     private String title;
+    /**
+     * ссылка на пост
+     */
     private String link;
+    /**
+     * описание вакансии
+     */
     private String description;
+    /**
+     * дата создания вакансии
+     */
     private LocalDateTime created;
 
     public Post(int id, String title, String link, String description, LocalDateTime created) {
