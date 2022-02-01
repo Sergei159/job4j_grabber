@@ -1,4 +1,4 @@
-package ru.job4j.grabber.utils;
+package ru.job4j.grabber;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -27,9 +27,9 @@ public class Post {
     /**
      * дата создания вакансии
      */
-    private LocalDateTime created;
+    private DateTimeParser created;
 
-    public Post(int id, String title, String link, String description, LocalDateTime created) {
+    public Post(int id, String title, String link, String description, DateTimeParser created) {
         this.id = id;
         this.title = title;
         this.link = link;
@@ -37,7 +37,7 @@ public class Post {
         this.created = created;
     }
 
-    public Post(String title, String link, String description, LocalDateTime created) {
+    public Post(String title, String link, String description, DateTimeParser created) {
         this.title = title;
         this.link = link;
         this.description = description;
@@ -60,7 +60,7 @@ public class Post {
         return description;
     }
 
-    public LocalDateTime getCreated() {
+    public DateTimeParser getCreated() {
         return created;
     }
 
@@ -80,7 +80,7 @@ public class Post {
         this.description = description;
     }
 
-    public void setCreated(LocalDateTime created) {
+    public void setCreated(DateTimeParser created) {
         this.created = created;
     }
 
