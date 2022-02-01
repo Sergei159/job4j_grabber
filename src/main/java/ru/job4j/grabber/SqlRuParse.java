@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Класс выводит на консоль определнные данные из веб-страницы.
+ * Класс парсит список постов и их описание из веб-страницы.
  */
 public class SqlRuParse implements Parse {
 
