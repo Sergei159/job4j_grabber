@@ -27,17 +27,36 @@ public class PsqlStore implements Store, AutoCloseable {
 
     public static void main(String[] args) {
         Properties properties = new Properties();
-        PsqlStore psqlStore = new PsqlStore(properties);
-        psqlStore.save(
-                new Post(
-                        "name1",
-                        "text1",
-                        "link1",
-                        LocalDateTime.now()
-                ));
+        try (PsqlStore psqlStore = new PsqlStore(properties)) {
+            Post post1 = new Post(
+                    "name1",
+                    "link",
+                    "description1",
+                    LocalDateTime.now()
+            );
+            Post post2 = new Post(
+                    "name2",
+                    "link2",
+                    "description2",
+                    LocalDateTime.now()
+            );
+            psqlStore.save(post1);
+            psqlStore.save(post2);
+            System.out.println("save:");
+            System.out.println(post1);
+            System.out.println(post2);
+            System.out.println("find by id:");
+            System.out.println(psqlStore.findById(post2.getId()));
+            List<Post> posts = psqlStore.getAll();
+            System.out.println("get all");
+            System.out.println(posts);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
+        @Override
     public void save(Post post) {
         Timestamp timestamp = Timestamp.valueOf(post.getCreated());
         try (PreparedStatement ps = cnn.prepareStatement(
@@ -71,14 +90,14 @@ public class PsqlStore implements Store, AutoCloseable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return posts;
     }
 
     @Override
     public Post findById(int id) {
         Post post = null;
         try (PreparedStatement ps = cnn.prepareStatement(
-                "Select * from posts where id = ?")) {
+                "Select * from post where id = ?")) {
             ps.setInt(1, id);
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
@@ -105,7 +124,7 @@ public class PsqlStore implements Store, AutoCloseable {
                 resultSet.getInt("id"),
                 resultSet.getString("name"),
                 resultSet.getString("link"),
-                resultSet.getString("description"),
+                resultSet.getString("text"),
                 timestamp.toLocalDateTime()
         );
 
