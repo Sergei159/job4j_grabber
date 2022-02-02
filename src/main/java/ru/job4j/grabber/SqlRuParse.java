@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Класс парсит список постов и их описание из веб-страницы.
@@ -29,8 +30,10 @@ public class SqlRuParse implements Parse {
 
     @Override
     public List<Post> list(String link) {
-        List<Post> posts = new ArrayList<>();
         int countOfPages = 5;
+        String toShow = "Java";
+        String notToShow = "Script";
+        List<Post> posts = new ArrayList<>();
         StringBuilder url = new StringBuilder(link);
         for (int i = 0; i < countOfPages; i++) {
             Document doc = null;
@@ -42,7 +45,8 @@ public class SqlRuParse implements Parse {
             Elements row = doc.select(".postslisttopic");
             for (Element td : row) {
                 Element href = td.child(0);
-                if (href.text().contains("java") || href.text().contains("JAVA") || href.text().contains("Java")) {
+                if ((href.text().contains(toShow) || href.text().contains(toShow.toLowerCase()) || href.text().contains(toShow.toUpperCase()))
+                && !(href.text().contains(notToShow) || href.text().contains(notToShow.toLowerCase()) || href.text().contains(notToShow.toUpperCase()))) {
                     System.out.println(href.text());
                     posts.add(detail(href.attr("href")));
                 }
@@ -77,6 +81,16 @@ public class SqlRuParse implements Parse {
         LocalDateTime time = dateTimeParser.parse(dateText);
         Post post = new Post(parsedTitle, link, parsedDescription, time);
         return post;
+    }
+
+    public static void main(String[] args) {
+        SqlRuParse sqlRuParse = new SqlRuParse(new DateTimeParser() {
+            @Override
+            public LocalDateTime parse(String parse) {
+                return null;
+            }
+        });
+        sqlRuParse.list("https://www.sql.ru/forum/job-offers");
     }
 
 }
