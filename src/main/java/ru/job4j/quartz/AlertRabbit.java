@@ -3,6 +3,7 @@ package ru.job4j.quartz;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,43 +24,56 @@ import static org.quartz.SimpleScheduleBuilder.*;
  */
 public class AlertRabbit {
 
-    private static int rabbitInterval;
-    private static Connection connection;
+
+
 
     /**
      * метод открывает файл properties.
      * достает оттуда интервал повторения операций и данные для подключения БД
      */
-    public void init() {
+    public Properties getProperties() {
+        Properties config = new Properties();
         try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
-            Properties config = new Properties();
             config.load(in);
-            rabbitInterval = Integer.parseInt(config.getProperty("rabbit.interval"));
-            Class.forName(config.getProperty("driver-class-name"));
-            connection = DriverManager.getConnection(
-                    config.getProperty("url"),
-                    config.getProperty("username"),
-                    config.getProperty("password")
-            );
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return config;
     }
+
+        public Connection init(Properties config) throws ClassNotFoundException {
+            Connection connection = null;
+            Class.forName(config.getProperty("driver-class-name"));
+            try {
+                connection = DriverManager.getConnection(
+                        config.getProperty("url"),
+                        config.getProperty("username"),
+                        config.getProperty("password")
+                );
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return connection;
+        }
 
     public static void main(String[] args) {
         AlertRabbit alertRabbit = new AlertRabbit();
         try {
-            alertRabbit.init();
-            try {
-                Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+            Properties properties = alertRabbit.getProperties();
+            int interval = Integer.parseInt(properties.getProperty("rabbit.interval"));
+            Scheduler scheduler;
+            JobDataMap data;
+            try (Connection connection = alertRabbit.init(properties)) {
+                scheduler = StdSchedulerFactory.getDefaultScheduler();
                 scheduler.start();
-                JobDataMap data = new JobDataMap();
+                data = new JobDataMap();
                 data.put("connection", connection);
                 JobDetail job = newJob(Rabbit.class)
                         .usingJobData(data)
                         .build();
                 SimpleScheduleBuilder times = simpleSchedule()
-                        .withIntervalInSeconds(rabbitInterval)
+                        .withIntervalInSeconds(interval)
                         .repeatForever();
                 Trigger trigger = newTrigger()
                         .startNow()
@@ -68,11 +82,9 @@ public class AlertRabbit {
                 scheduler.scheduleJob(job, trigger);
                 Thread.sleep(10000);
                 scheduler.shutdown();
-            } catch (Exception se) {
-                se.printStackTrace();
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+        } catch (Exception se) {
+        se.printStackTrace();
         }
     }
 
