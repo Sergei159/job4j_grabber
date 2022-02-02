@@ -21,6 +21,8 @@ public class SqlRuParse implements Parse {
         this.dateTimeParser = dateTimeParser;
     }
 
+
+
     /**
      *
      * @param link ссылка на веб-страницу
@@ -37,7 +39,7 @@ public class SqlRuParse implements Parse {
         for (int i = 0; i < countOfPages; i++) {
             Document doc = null;
             try {
-                doc = Jsoup.connect(url.toString() + "/" + (i + 1)).get();
+                doc = Jsoup.connect(url + "/" + (i + 1)).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -72,9 +74,9 @@ public class SqlRuParse implements Parse {
 
         String parsedDescription = doc.select(".msgBody").get(1).text();
 
-        String dateText = doc.select(".msgFooter").get(0).text();
+        String dateText = doc.select(".msgFooter").first().text();
 
-        String[] dividedDate = dateText.split("", 4);
+        String[] dividedDate = dateText.split("\\[");
         dateText = dividedDate[0];
 
         LocalDateTime time = dateTimeParser.parse(dateText);
@@ -83,13 +85,7 @@ public class SqlRuParse implements Parse {
     }
 
     public static void main(String[] args) {
-        SqlRuParse sqlRuParse = new SqlRuParse(new DateTimeParser() {
-            @Override
-            public LocalDateTime parse(String parse) {
-                return null;
-            }
-        });
-        sqlRuParse.list("https://www.sql.ru/forum/job-offers");
+
     }
 
 }

@@ -24,9 +24,6 @@ import static org.quartz.SimpleScheduleBuilder.*;
  */
 public class AlertRabbit {
 
-
-
-
     /**
      * метод открывает файл properties.
      * достает оттуда интервал повторения операций и данные для подключения БД

@@ -9,9 +9,9 @@ import java.util.Map;
  * класс берет дату из сайта sql.ru  и конвектирует ее в определенный формат
  */
 public class SqlRuDateTimeParser implements DateTimeParser {
-    private final DateTimeFormatter dayIsGreaterThan10 = DateTimeFormatter.ofPattern("dd MM yy, HH:mm");
-    private final DateTimeFormatter dayIsLessThan10 = DateTimeFormatter.ofPattern("d MM yy, HH:mm");
-    private final DateTimeFormatter onlyDates = DateTimeFormatter.ofPattern("dd MM yy");
+    private final DateTimeFormatter dayIsGreaterThan10 = DateTimeFormatter.ofPattern("dd MM yy, HH:mm ");
+    private final DateTimeFormatter dayIsLessThan10 = DateTimeFormatter.ofPattern("d MM yy, HH:mm ");
+    private final DateTimeFormatter onlyDates = DateTimeFormatter.ofPattern("dd MM yy ");
 
     private static final Map<String, String> MONTHS = Map.ofEntries(
             Map.entry("янв", "01"),
