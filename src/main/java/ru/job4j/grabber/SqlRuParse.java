@@ -42,8 +42,11 @@ public class SqlRuParse implements Parse {
             Elements row = doc.select(".postslisttopic");
             for (Element td : row) {
                 Element href = td.child(0);
-                System.out.println(href.attr("href"));
-                posts.add(detail(href.attr("href")));
+                if (href.text().contains("java") || href.text().contains("JAVA") || href.text().contains("Java")) {
+                    System.out.println(href.text());
+                    posts.add(detail(href.attr("href")));
+                }
+
             }
         }
         return posts;
@@ -75,4 +78,5 @@ public class SqlRuParse implements Parse {
         Post post = new Post(parsedTitle, link, parsedDescription, time);
         return post;
     }
+
 }
