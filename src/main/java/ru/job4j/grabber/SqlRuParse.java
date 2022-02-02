@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,8 +71,8 @@ public class SqlRuParse implements Parse {
         String[] dividedDate = dateText.split("", 4);
         dateText = dividedDate[0];
 
-        dateTimeParser.parse(dateText);
-        Post post = new Post(parsedTitle, link, parsedDescription, dateTimeParser);
+        LocalDateTime time = dateTimeParser.parse(dateText);
+        Post post = new Post(parsedTitle, link, parsedDescription, time);
         return post;
     }
 }

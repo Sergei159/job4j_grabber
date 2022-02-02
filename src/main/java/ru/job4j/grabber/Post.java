@@ -27,9 +27,9 @@ public class Post {
     /**
      * дата создания вакансии
      */
-    private DateTimeParser created;
+    private LocalDateTime created;
 
-    public Post(int id, String title, String link, String description, DateTimeParser created) {
+    public Post(int id, String title, String link, String description, LocalDateTime created) {
         this.id = id;
         this.title = title;
         this.link = link;
@@ -37,7 +37,7 @@ public class Post {
         this.created = created;
     }
 
-    public Post(String title, String link, String description, DateTimeParser created) {
+    public Post(String title, String link, String description, LocalDateTime created) {
         this.title = title;
         this.link = link;
         this.description = description;
@@ -60,7 +60,7 @@ public class Post {
         return description;
     }
 
-    public DateTimeParser getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
@@ -80,7 +80,7 @@ public class Post {
         this.description = description;
     }
 
-    public void setCreated(DateTimeParser created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
