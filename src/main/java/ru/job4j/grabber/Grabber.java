@@ -51,7 +51,6 @@ public class Grabber implements Grab {
     }
 
     public static class GrabJob implements Job {
-
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException {
             JobDataMap map = context.getJobDetail().getJobDataMap();
