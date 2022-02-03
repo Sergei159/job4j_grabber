@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Класс парсит список постов и их описание из веб-страницы.
@@ -32,23 +33,22 @@ public class SqlRuParse implements Parse {
     @Override
     public List<Post> list(String link) {
         int countOfPages = 5;
-        String toShow = "Java";
-        String notToShow = "Script";
+        String toShow = "java";
+        String notToShow = "script";
         List<Post> posts = new ArrayList<>();
         StringBuilder url = new StringBuilder(link);
         for (int i = 0; i < countOfPages; i++) {
             Document doc = null;
             try {
-                doc = Jsoup.connect(url + "/" + (i + 1)).get();
+                doc = Jsoup.connect(url + String.valueOf(i + 1)).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             Elements row = doc.select(".postslisttopic");
             for (Element td : row) {
                 Element href = td.child(0);
-                if ((href.text().contains(toShow) || href.text().contains(toShow.toLowerCase()) || href.text().contains(toShow.toUpperCase()))
-                && !(href.text().contains(notToShow) || href.text().contains(notToShow.toLowerCase()) || href.text().contains(notToShow.toUpperCase()))) {
-                    System.out.println(href.text());
+                if (href.text().toLowerCase().contains(toShow)
+                && !href.text().toLowerCase().contains(notToShow)) {
                     posts.add(detail(href.attr("href")));
                 }
 
